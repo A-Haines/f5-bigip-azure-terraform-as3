@@ -1,0 +1,53 @@
+{
+    "class": "AS3",
+    "action": "deploy",
+    "persist": true,
+    "declaration": {
+        "class": "ADC",
+        "schemaVersion": "3.0.0",
+        "id": "declaration_1",
+        "label": "AWAF Application",
+        "remark": "AWAF application as3 with round robin pool",
+        "Tenant_2": {
+            "class": "Tenant",
+            "defaultRouteDomain": 0,
+            "AWAF_Application_1": {
+                "class": "Application",
+                "template": "http",
+                "serviceMain": {
+                    "class": "Service_HTTP",
+                    "virtualAddresses": [
+                        "10.0.2.10"
+                    ],
+                    "snat": "auto",
+                    "pool": "Pool1",
+                    "policyWAF": {
+                        "use": "AWAF_Policy"
+                    }
+                },
+                "Pool1": {
+                    "class": "Pool",
+                    "monitors": [
+                        "http"
+                    ],
+                    "members": [
+                        {
+                            "servicePort": 8001,
+                            "serverAddresses": [
+                                "10.0.1.10",
+                                "10.0.1.11"
+                            ]
+                        }
+                    ]
+                },
+                "AWAF_Policy": {
+                    "class": "WAF_Policy",
+                    "policy": {
+                        "url": "https://raw.githubusercontent.com/A-Haines/f5_awaf/main/vp_base_awaf_IIS.xml"
+                    },
+                    "ignoreChanges": true
+                }
+            }
+        }
+    }
+}
